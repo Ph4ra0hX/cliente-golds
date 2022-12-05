@@ -1,16 +1,20 @@
 <script>
 import { ref, onMounted } from "vue";
 import Footer from "./components/Footer.vue";
+
+
 export default {
-  emits: ["selecionarItem"],
 
   setup() {
+
     const categorias = ref([
       { nome: "BURGER", img: "coffe.png" },
     ]
     );
 
     const pedidoBurger = ref([]);
+
+    const listaDePedidos = ref([]);
 
     const paes = ref([
       {
@@ -79,7 +83,6 @@ export default {
       },
       {
         nome: "Linguiça Suína",
-        descricao: "",
         preco: 3.0,
         id: 3,
       },
@@ -88,48 +91,39 @@ export default {
     const complementos = ref([
       {
         nome: "Bacon",
-        descricao: "",
         preco: 2.0,
         id: 4,
       },
       {
         nome: "Ovo",
-        descricao: "",
         preco: 2.0,
         id: 4,
       }, {
         nome: "Cebola Caramelizada",
-        descricao: "",
         preco: 1.0,
         id: 4,
       }, {
         nome: "Maionese Golds",
-        descricao: "",
         preco: 0.0,
         id: 4,
       }, {
         nome: "Presunto",
-        descricao: "",
         preco: 1.0,
         id: 4,
       }, {
         nome: "Calabresa",
-        descricao: "",
         preco: 2.0,
         id: 4,
       }, {
         nome: "Batata Palha",
-        descricao: "",
         preco: 1.0,
         id: 4,
       }, {
         nome: "Molho Barbecue",
-        descricao: "",
         preco: 1.0,
         id: 4,
       }, {
         nome: "Milho Verde",
-        descricao: "",
         preco: 1.0,
         id: 4,
       },
@@ -138,26 +132,23 @@ export default {
     const verduras = ref([
       {
         nome: "Tomate",
-        descricao: "",
         preco: 0.0,
         id: 5,
       }, {
         nome: "Cebola Crua",
-        descricao: "",
         preco: 0.0,
         id: 5,
       }, {
         nome: "Cenoura Ralada",
-        descricao: "",
         preco: 0.0,
         id: 5,
       }, {
         nome: "Alface",
-        descricao: "",
         preco: 0.0,
         id: 5,
       },
     ]);
+
 
     return {
       paes,
@@ -167,17 +158,36 @@ export default {
       verduras,
       categorias,
       pedidoBurger,
+      listaDePedidos,
     };
   },
   methods: {
     selecionarItem(id) {
       console.log(id)
-    }
+    },
+    adicionarPedido() {
+
+
+      this.$toast.info(`Pedido adicionado com sucesso! 🍔`,
+        {
+          position: "top-right",
+        });
+
+      console.log(this.pedidoBurger.length)
+
+      this.listaDePedidos.push(this.pedidoBurger[0])
+
+      console.log(this.pedidoBurger)
+
+      this.pedidoBurger = [];
+    },
   },
 
   computed: {
     valorTotalDosPedidosSomados() {
+
       var total = this.pedidoBurger.reduce(getTotal, 0);
+
       function getTotal(total, item) {
         return total + (item.preco);
       }
@@ -196,11 +206,11 @@ export default {
 
     <div id="fixedContainer">
       <div id="textoPreco">
-        <span>R$: </span> <span id="totalcost">{{ valorTotalDosPedidosSomados }}</span>
+        <span>R$: </span> <span id="totalcost"> {{ valorTotalDosPedidosSomados }}</span>
       </div>
     </div>
     <img src="/logoD.png" id="logo" alt="logo" />
-
+    <!--
     <div id="selecionar" v-for="(categoria, index) in categorias" :key="categoria">
       <div id="imgEtitulo">
         <h2 id="titulo">{{ categoria.nome }}</h2>
@@ -215,13 +225,15 @@ export default {
         </div>
       </div>
     </div>
+    -->
     <div id="listar">
       {{ pedidoBurger }}
       <div class="Categoria">
         <strong id="categoria">ESCOLHA SEU PÃO:</strong>
         <div v-for="(pao, index) in paes" :key="pao">
           <label class="container-checkbox" id="textoPreco">
-            <input type="checkbox" class="checkbox1" id="adicional" :value="pao" v-model="pedidoBurger" />
+            <input type="checkbox" class="checkbox1" id="adicional" :value="pao" v-model="pedidoBurger"
+              v-on:change="" />
             <span class="checkmark"></span>
           </label>
           <label style="pointer-events: none" for="adicional">{{
@@ -288,7 +300,7 @@ export default {
           <br>
         </div>
       </div>
-      <button id="butOpcoes" @click="enviarPedido()" type="submit" value="Submit">
+      <button id="butOpcoes" @click="adicionarPedido()" type="submit" value="Submit">
         Concluir
       </button>
     </div>
